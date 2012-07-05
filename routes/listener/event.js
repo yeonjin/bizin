@@ -138,7 +138,11 @@ exports.test = function(req, res)
 	});
 	*/
 	
+	/*
 	test.deleteCheckinInfo(function(err, body){
 		res.send(body);
 	});
+	*/
+	console.log(test1234);
+	res.send('aaa');
 };

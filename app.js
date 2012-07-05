@@ -9,6 +9,7 @@ var express = require('express')
 var app = module.exports = express.createServer();
 
 // Configuration
+global.test1234 = 'test33333';
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
