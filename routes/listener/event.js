@@ -138,11 +138,11 @@ exports.test = function(req, res)
 	});
 	*/
 	
-	/*
-	test.deleteCheckinInfo(function(err, body){
+	
+	test.deleteMeetingDate(function(err, body){
 		res.send(body);
 	});
-	*/
+	
 	console.log(test1234);
-	res.send('aaa');
+	//res.send('aaa');
 };
