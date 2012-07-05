@@ -1,6 +1,16 @@
 var user = require('../../lib/model/user');
 var meeting = require('../../lib/model/meeting');
 var test = require('../../lib/model/test');
+var winston = require('winston');
+
+var logger = new (winston.Logger)({
+	transports: [
+	    new (winston.transports.Console)(),
+	    new (winston.transports.File)({
+	    	filename: 'rest_event.log'
+	    })
+	]
+});
 	
 exports.auth = function(req, res)
 {
@@ -12,6 +22,9 @@ exports.auth = function(req, res)
 	console.log(userPassword);
 	
 	user.auth(userId, userPassword, function(err, body){
+		var log = stringf("request:{0} userId:{1} userPassword:{2} result:{3}"
+				, "auth", userId, userPassword, JSON.stringify(body));
+		logger.info(log);
 		res.send(body);
 	});
 };
@@ -28,7 +41,9 @@ exports.meetings = function(req, res)
     console.log(requestNumber);
     
     meeting.getList(requestNumber, lastId, function(err, body){
-    	console.log(body);
+    	var log = stringf("request:{0} userId:{1} lastId:{2} requestNumber:{3} result:{4}"
+				, "meetings", userId, lastId, requestNumber,JSON.stringify(body));
+		logger.info(log);
 		res.send(body);
 	});
 };
@@ -43,7 +58,9 @@ exports.meeting = function(req, res)
 	console.log(userId);
 	
 	meeting.getMeeting(meetingId, function(err, body){
-    	console.log(body);
+		var log = stringf("request:{0} meetingId:{1} userId:{2} result:{3}"
+				, "meeting", meetingId, userId, JSON.stringify(body));
+		logger.info(log);
 		res.send(body);
 	});
 	
@@ -58,7 +75,9 @@ exports.checkin = function(req, res)
 	console.log(userId);
 	
 	meeting.checkin(meetingId, userId, function(err, body){
-    	console.log(body);
+		var log = stringf("request:{0} meetingId:{1} userId:{2} result:{3}"
+				, "checkin", meetingId, userId, JSON.stringify(body));
+		logger.info(log);
 		res.send(body);
 	});
 };
@@ -70,8 +89,9 @@ exports.collars = function(req, res)
 	console.log(userId);
 	
 	user.getCollars(userId, function(err, body){
-		console.log('?');
-		console.log(body);
+		var log = stringf("request:{0} userId:{1} result:{2}"
+				, "collars", userId, JSON.stringify(body));
+		logger.info(log);
 		res.send(body);
 	});
 };
@@ -85,6 +105,9 @@ exports.profile = function(req, res)
 	console.log(connectionUserId);
 	
 	user.getProfile(userId, connectionUserId, function(err, body){
+		var log = stringf("request:{0} userId:{1} connectionUserId:{2} result:{3}"
+				, "profile", userId, connectionUserId, JSON.stringify(body));
+		logger.info(log);
 		res.send(body);
 	});
 };
@@ -103,6 +126,18 @@ exports.savePicture = function(req, res)
 	console.log(objPicture);
 	
 	user.savePicture(objPicture, function(err, body){
+		var log = stringf("request:{0} strUserId:{1} strImageLocation:{2} strUploadedDateTime:{3} "
+				+ "strTitle:{4} strWidth:{5} strHeight:{6} strIsMainPicture:{7} result:{8}"
+				, "savePicture"
+				, objPicture.strUserId
+				, objPicture.strImageLocation
+				, objPicture.strUploadedDateTime
+				, objPicture.strTitle
+				, objPicture.strWidth
+				, objPicture.strHeight
+				, objPicture.strIsMainPicture
+				, JSON.stringify(body));
+		logger.info(log);
 		res.send(body);
 	});
 };
@@ -120,6 +155,9 @@ exports.connection = function(req, res)
 	console.log(connectionMeetingId);
 	
 	user.connection(userId, connectionUserId, connectionDateTime, connectionMeetingId, function(err, body){
+		var log = stringf("request:{0} userId:{1} connectionUserId:{2} result:{3}"
+				, "connection", userId, connectionUserId, JSON.stringify(body));
+		logger.info(log);
 		res.send(body);
 	});
 };
@@ -145,4 +183,19 @@ exports.test = function(req, res)
 	
 	console.log(test1234);
 	//res.send('aaa');
+};
+
+stringf = function(text)
+{
+    if (arguments.length <= 1)
+    {
+        return text;
+    }
+    var tokenCount = arguments.length - 2;
+    for(var token = 0; token <= tokenCount; token++)
+    {
+        text = text.replace( new RegExp( "\\{" + token + "\\}", "gi" ),
+                                                arguments[ token + 1 ] );
+    }
+    return text;
 };
