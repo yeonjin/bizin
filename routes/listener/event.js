@@ -177,7 +177,7 @@ exports.test = function(req, res)
 	*/
 	
 	
-	test.deleteMeetingDate(function(err, body){
+	test.updateImage(function(err, body){
 		res.send(body);
 	});
 	
